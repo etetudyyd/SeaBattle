@@ -7,51 +7,37 @@ using System.Threading.Tasks;
 
 namespace SeaBattle
 {
-    public class Game {
+    public class Game
+    {
 
-        public GameAccount Winner { get; set; }
-        public GameAccount Loser { get; set; }
-        public int ID { get; set; }
-
-        public long TimeDuration { get; set; }   
-
-        public Game(GameAccount winner, GameAccount loser, int id, long timeDuration)
+        public GameAccount startPlay(GameAccount player1, GameAccount player2)
         {
 
-            Winner = winner;
-            Loser = loser;
-            ID = id;
-            TimeDuration = timeDuration;
-        }
+            char[,] playerBattleField1 = new char[player1.Field.Size, player1.Field.Size];
+            char[,] playerBattleField2 = new char[player2.Field.Size, player2.Field.Size];
 
+            GameAccount currentPlayer = player1;
 
+            char[,] currentPlayerField = player2.Field.Battlefield;
 
-        public static GameAccount startPlay(GameAccount player1, GameAccount player2, int size, string[] alphabet)
-        {
-
-            char[,] playerBattleField1 = new char[size,size];
-            char[,] playerBattleField2 = new char[size,size];
-
-            string currentPlayerName = player1.Name;
-            char[,] currentPlayerField = player2.Battlefield;
             char[,] currentPlayerBattleField = playerBattleField1;
 
-            
-           while (isPlayerAlive(player1.Battlefield, size) && isPlayerAlive(player2.Battlefield, size))
+
+            while (isPlayerAlive(player1.Field.Battlefield, player1.Field.Size) && isPlayerAlive(player2.Field.Battlefield, player2.Field.Size))
             {
-                Engine.printField(currentPlayerBattleField, alphabet);
-                
-                Console.WriteLine(currentPlayerName + " your turn, please, input x coord of shot");
+                DefaultGameField.printField(currentPlayerBattleField, player1.Field.alphabet);
+
+                Console.WriteLine(currentPlayer.Name + " your turn, please, input x coord of shot");
                 string strxshoot = Console.ReadLine();
                 int xshoot = Convert.ToInt32(strxshoot);
-                Console.WriteLine(currentPlayerName + " your turn, please, input y coord of shot");
+                Console.WriteLine(currentPlayer.Name + " your turn, please, input y coord of shot");
                 string stryshoot = Console.ReadLine();
 
                 int yshoot = 0;
 
-                for (int b = 0; b < alphabet.Length; b++)
+                for (int b = 0; b < player1.Field.alphabet.Length; b++)
                 {
-                    if (alphabet[b] == stryshoot)
+                    if (player1.Field.alphabet[b] == stryshoot)
                     {
                         yshoot = 1 + b;
                         break;
@@ -60,34 +46,35 @@ namespace SeaBattle
 
                 int shotResult = handleShot(currentPlayerBattleField, currentPlayerField, xshoot, yshoot);
 
-                if (shotResult == 0 && currentPlayerName == player1.Name)
+                if (shotResult == 0 && currentPlayer.Name == player1.Name)
                 {
-                    currentPlayerName = player2.Name;
-                    currentPlayerField = player1.Battlefield;
+                    currentPlayer = player2;
+                    currentPlayerField = player1.Field.Battlefield;
                     currentPlayerBattleField = playerBattleField2;
                 }
 
-               else if (shotResult == 0 && currentPlayerName == player2.Name)
+                else if (shotResult == 0 && currentPlayer.Name == player2.Name)
                 {
-                    currentPlayerName = player1.Name;
-                    currentPlayerField = player2.Battlefield;
+                    currentPlayer = player1;
+                    currentPlayerField = player2.Field.Battlefield;
                     currentPlayerBattleField = playerBattleField1;
                 }
             }
 
-            Console.WriteLine(currentPlayerName + " is Winner!");
+            Console.WriteLine(currentPlayer.Name + " is Winner!");
             player1.AmountofGames++;
             player2.AmountofGames++;
-            if (currentPlayerName == player1.Name)
+            if (currentPlayer == player1)
             {
                 return player1;
             }
-            else {
+            else
+            {
                 return player2;
-            }          
+            }
         }
 
-        private static int handleShot(char[,] battleField, char[,] field, int x, int y)
+        private int handleShot(char[,] battleField, char[,] field, int x, int y)
         {
             if (x > 10 || x < 1 || y > 10 || y < 1)
             {
@@ -96,19 +83,21 @@ namespace SeaBattle
 
             }
 
-            if ('#' == field[y,x])
+            if ('#' == field[y, x])
             {
                 if (field[y - 1, x] == '#'
                 || field[y + 1, x] == '#'
                 || field[y, x + 1] == '#'
-                || field[y, x - 1] == '#') {
+                || field[y, x - 1] == '#')
+                {
                     field[y, x] = 'X';
                     battleField[y, x] = 'X';
                     Console.WriteLine("Good shot! Wounded!");
-                   
+
 
                 }
-                else {
+                else
+                {
                     field[y, x] = 'X';
                     battleField[y, x] = 'X';
                     Console.WriteLine("Good shot! Killed!");
@@ -119,19 +108,19 @@ namespace SeaBattle
                 battleField[y + 1, x + 1] = '*';
                 return 1;
             }
-            battleField[y,x] = '*';
+            battleField[y, x] = '*';
             Console.WriteLine("Bad shot!");
 
             return 0;
         }
 
-        private static bool isPlayerAlive(char[,] field, int size)
+        private bool isPlayerAlive(char[,] field, int size)
         {
-            for (int i = 0;i < size;i++)
+            for (int i = 0; i < size; i++)
             {
                 for (int j = 0; j < size; j++)
                 {
-                    if ('#' == field[i,j])
+                    if ('#' == field[i, j])
                     {
                         return true;
                     }

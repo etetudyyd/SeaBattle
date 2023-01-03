@@ -8,16 +8,18 @@ namespace SeaBattle
 {
     public class Statistic
     {
-        public Game Game { get; set; }
+        public GameAccount Winner { get; set; }
+        public GameAccount Loser { get; set; }
+        public int ID { get; set; }
+        public long TimeDuration { get; set; }
 
-
-        public Statistic(Game game)
+         public Statistic(GameAccount winner, GameAccount loser, int id, long timeDuration)
         {
-            Game = game;
+
+            Winner = winner;
+            Loser = loser;
+            ID = id;
+            TimeDuration = timeDuration; 
         }
-
-
-
-
     }
 }

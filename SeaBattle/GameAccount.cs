@@ -10,14 +10,16 @@ namespace SeaBattle
     {
         public string Name { get; set; }
         public int AmountofGames { get; set; }
-        public char[,] Battlefield { get; set; }
+        public DefaultGameField Field { get; set; }
+        public bool IsLoser { get; set; }
 
-
-        public GameAccount(string name, int amountofgames, char[,] battlefield)
+        public GameAccount(string name, int amountofgames, DefaultGameField field)
         {
             Name = name;
             AmountofGames = amountofgames;
-            Battlefield = battlefield;
+            Field = field;
+            IsLoser = true;
         }
+
     }
 }
